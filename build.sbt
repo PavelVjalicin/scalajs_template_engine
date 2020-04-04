@@ -26,6 +26,7 @@ lazy val server = (project in file("server"))
         JsEngineKeys.engineType := JsEngineKeys.EngineType.Node
 
     )
+    .dependsOn(sharedJVM)
     .enablePlugins(PlayScala)
     .aggregate(client,sharedJVM,sharedJS)
 

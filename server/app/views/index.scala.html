@@ -1,0 +1,15 @@
+@(csrfToken:String)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>ScalaJS Example</title>
+</head>
+<body>
+@scalajs.html.scripts("client",routes.Assets.versioned(_).toString,name => getClass.getResource(s"/public/$name") != null)
+<div id="main"></div>
+<script>
+var App = { t: "@csrfToken" }
+ScalaDOM.render("main",comps.NotesPage)
+</script>
+</body>
+</html>
