@@ -1,26 +1,24 @@
 package controllers
 
 import com.google.inject.Inject
-import play.api.mvc.{ControllerComponents, PlayBodyParsers}
+import play.api.mvc.{ControllerComponents}
 import play.filters.csrf.CSRF
 import shared.{Note, Notes}
-import upickle.default._
 
 import scala.collection.mutable
 
 
 
-class HomeController @Inject() (cc:ControllerComponents,parse:PlayBodyParsers) extends AbstractApiController(cc) {
+class HomeController @Inject() (cc:ControllerComponents) extends AbstractApiController(cc) {
     var idCounter = 1
 
-    val notes:mutable.Map[Long,Note] = mutable.Map()
+    val notes:mutable.SortedMap[Long,Note] = mutable.SortedMap()
 
     def index = Action { req =>
         Ok(views.html.index(CSRF.getToken(req).get.value))
     }
 
     def postNote = Action { implicit req =>
-
         postResponse(shared.jsRoutes.post.note) { note =>
             notes += ((idCounter,note.copy(id=Some(idCounter))))
             idCounter = idCounter + 1
