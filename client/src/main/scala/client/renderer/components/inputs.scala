@@ -191,15 +191,6 @@ object inputs {
             hidden=hidden
         )
 
-
-    case class InlineSearchSelect(override val inputOptions: InputOptions,
-                                  name:String,
-                                  override val initialValue:String="")
-        extends InlineInput(
-            inputOptions,
-            SearchSelectInput(name,initialValue,"",inputOptions.isRequired)
-        )
-
     case class InlineSelect(override val inputOptions:InputOptions,
                             name:String,
                             override val initialValue:String="",
@@ -251,6 +242,11 @@ object inputs {
         def onChange(f: Event => Any): Unit = {
             cancelError()
             input.onChange(f)
+        }
+
+        override def onSubmit(f: Event => Any): Unit = {
+            cancelError()
+            input.onSubmit(f)
         }
 
         def errorTrigger(str:Option[String]): Unit = {
@@ -321,6 +317,8 @@ object inputs {
 
         def onChange(f: Event => Any): Unit = None
 
+        def onSubmit(f: Event => Any): Unit = input.onSubmit(f)
+
         def isRequired: Boolean = input.isRequired
 
         def value: String = input.value
@@ -366,21 +364,6 @@ object inputs {
         }
     }
 
-    @JSExportTopLevel("SearchSelectTest")
-    class SearchSelectTest extends JSComponent {
-        def render: ScalaElem = {
-            d() {
-                RWInput(
-                    InlineSearchSelect(
-                        InputOptions("Assign Adviser",isRequired = true,220D),
-                        "adviser"
-                    ),
-                    isWritable = true
-                )
-            }
-        }
-    }
-
     class Triangle extends JSComponent {
         def render = {
             img("/assets/images/triangle.svg",Some(10),Some(7),style = "position: relative;top: -1px;",className = "noselect")
@@ -423,6 +406,8 @@ object inputs {
 
         def onChange(f: Event => Any): Unit = inp.onChange _
 
+        override def onSubmit(f: Event => Any): Unit = inp.onSubmit _
+
         def value: String = inp.value
 
         def initialTextValue: String = initialValue.toString
@@ -453,6 +438,8 @@ object inputs {
         def onClick(f: Event => Any): Unit = inp.onClick _
 
         def onChange(f: Event => Any): Unit = inp.onChange _
+
+        def onSubmit(f: Event => Any): Unit = inp.onSubmit _
 
         def value: String =
             if(inp.elem.asInstanceOf[org.scalajs.dom.html.Input].checked)
@@ -524,6 +511,8 @@ object inputs {
 
         def onChange(f: Event => Any): Unit = inp.onChange _
 
+        def onSubmit(f: Event => Any): Unit = inp.onSubmit _
+
         def value: String = inp.value
 
         def initialTextValue: String = inp.initialTextValue
@@ -560,6 +549,8 @@ object inputs {
 
         def onChange(f: Event => Any): Unit = inp.onChange(f)
 
+        def onSubmit(f: Event => Any): Unit = inp.onSubmit _
+
         def isRequired: Boolean = false
 
         def value: String = inp.value
@@ -592,65 +583,6 @@ object inputs {
         }
     }
 
-    case class SearchSelectInput(name:String,
-                                 initialValue:String = "",
-                                 className:String="",
-                                 isRequired:Boolean) extends JSComponent with Input {
-
-        case class SMainInput(withTriangle:Boolean,value:String)
-
-        case class MainInput(initialState: SMainInput) extends JSComponentWithState(initialState) {
-
-
-            def render: ScalaElem = {
-                span(className = "inputBox "+className,style = "display:inline-block;") appendSeq {
-                    val seq = Seq(span(text=currentValue,style = "min-width:75px;display:inline-block;"))
-                    if(state.withTriangle)
-                        seq :+ new Triangle
-                    else seq
-                }
-            }
-        }
-
-        var currentValue = initialValue
-
-        def isValid: Option[String] = None
-
-        def onClick(f: Event => Any): Unit = {}
-
-        def onChange(f: Event => Any): Unit = {}
-
-        def value: String = currentValue
-
-        def initialTextValue: String = initialValue
-
-        def errorTrigger(str:Option[String]): Unit = {}
-
-        def cancelError(): Unit = {}
-
-        val mainInput = MainInput(SMainInput(true,currentValue))
-
-        val main = span() { mainInput}
-
-        main.onClick((e:Event) => {
-            val s = mainInput.state
-            mainInput.reRender(SMainInput(!s.withTriangle,currentValue))
-            val smS = selectMenu.state
-            selectMenu.reRender(!smS)
-            selectMenu.inp.inp.elem.asInstanceOf[HTMLElement].focus()
-        })
-
-        val selectMenu = SearchSelectMenu("searchAdvisors")
-
-        def render: ScalaElem = {
-            span(style = "display:inline-block;") (
-                main,
-                selectMenu)
-        }
-    }
-
-
-
     class SelectInput(name:String,
                       val initialValue:String="",
                       options:Seq[SelectOption],
@@ -666,6 +598,8 @@ object inputs {
         def onClick(f: Event => Any): Unit = state.onClick(f)
 
         def onChange(f: Event => Any): Unit = state.onChange(f)
+
+        override def onSubmit(f: Event => Any): Unit = state.onSubmit(f)
 
         def errorTrigger(str:Option[String]): Unit = {
             errorTriggered = true
@@ -719,6 +653,8 @@ object inputs {
 
         def onChange(f: Event => Any): Unit = state.onChange(f)
 
+        def onSubmit(f: Event => Any): Unit = state.onSubmit _
+
         def value: String = state.value
 
         def initialTextValue: String = initialValue
@@ -742,6 +678,7 @@ object inputs {
         def isValid:Option[String]
         def onClick(f:Event => Any):Unit
         def onChange(f:Event => Any):Unit
+        def onSubmit(f:Event => Any):Unit
         def isRequired:Boolean
         def value:String
         def initialValue:String
@@ -760,6 +697,8 @@ object inputs {
         }
 
         def onChange(f: Event => Any): Unit = radioInput.onChange(f)
+
+        def onSubmit(f: Event => Any): Unit = radioInput.onSubmit _
 
         def isRequired: Boolean = radioInput.isRequired
 
@@ -805,6 +744,8 @@ object inputs {
         }
 
         def onChange(f: Event => Any): Unit = inputs.foreach(_.onChange(f))
+
+        def onSubmit(f: Event => Any): Unit = inputs.foreach(_.onSubmit(f))
 
         def value: String = inputs.map(i=>i.value).find(str => str != "").getOrElse("")
 

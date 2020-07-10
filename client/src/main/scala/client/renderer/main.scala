@@ -228,11 +228,15 @@ object main {
 
         def onKeyDown(f:Event =>Any) = onKeyDownSource.addCallback(f)
 
-        private[renderer]def copyEventCallbacks: (ArrayBuffer[Event => Any], ArrayBuffer[Event => Any], ArrayBuffer[Event => Any], ArrayBuffer[Event => Any]) = {
-            (onChangeSource.callbacks , onClickSource.callbacks,onKeyUpSource.callbacks,onKeyDownSource.callbacks)
+        lazy private val onSubmitSource = new EventDispatcher(this.elem,"submit")
+
+        def onSubmit(f:Event => Any) = onSubmitSource.addCallback(f)
+
+        private[renderer]def copyEventCallbacks: (ArrayBuffer[Event => Any], ArrayBuffer[Event => Any], ArrayBuffer[Event => Any], ArrayBuffer[Event => Any], ArrayBuffer[Event => Any]) = {
+            (onChangeSource.callbacks , onClickSource.callbacks,onKeyUpSource.callbacks,onKeyDownSource.callbacks,onSubmitSource.callbacks)
         }
 
-        private[renderer] def setEventCallbacks(tuple:(ArrayBuffer[Event => Any], ArrayBuffer[Event => Any], ArrayBuffer[Event => Any], ArrayBuffer[Event => Any])):Unit = {
+        private[renderer] def setEventCallbacks(tuple:(ArrayBuffer[Event => Any], ArrayBuffer[Event => Any], ArrayBuffer[Event => Any], ArrayBuffer[Event => Any], ArrayBuffer[Event => Any])):Unit = {
             onChangeSource.init()
             onChangeSource.callbacks ++= tuple._1
             onClickSource.init()
@@ -241,6 +245,8 @@ object main {
             onKeyUpSource.callbacks ++= tuple._3
             onKeyDownSource.init()
             onKeyDownSource.callbacks ++= tuple._4
+            onSubmitSource.init()
+            onSubmitSource.callbacks ++= tuple._5
         }
 
         private def remove: Node = elem.parentNode.removeChild(elem)
