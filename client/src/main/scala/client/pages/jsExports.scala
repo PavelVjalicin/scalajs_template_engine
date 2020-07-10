@@ -3,7 +3,7 @@ package client.pages
 import client.components.AddButtonForm
 import client.renderer.components.inputs.{InlineTextInput, InputOptions}
 import client.renderer.main.{JSComponent, JSComponentWithState}
-import client.renderer.scalaElems.{Button, d, h, span}
+import client.renderer.scalaElems.{Button, d, h}
 import client.renderer.{main, utils}
 import shared.{IDInput, Note}
 
