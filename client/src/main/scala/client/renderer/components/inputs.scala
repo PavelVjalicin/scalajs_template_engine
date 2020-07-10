@@ -105,7 +105,9 @@ object inputs {
 
         def onSubmit: () => Unit = { () =>
 
-            inputs.foreach({ x=> x.cancelError() })
+            inputs.foreach({ x=>
+                x.cancelError()
+            })
 
             val errorInputs = checkRequired(inputs)
 
@@ -159,12 +161,13 @@ object inputs {
             },
             className = "btn btn-primary ignoreConfirm",
             style="margin-right:5px;",
-            btnType = "button")
+            btnType = "submit")
 
         def render: ScalaElem = {
-            d()
-            formVal(
-                formFunction(inputs,submitButton,formError)
+            d() (
+                formVal(
+                    formFunction(inputs,submitButton,formError)
+                )
             )
         }
     }
@@ -184,7 +187,14 @@ object inputs {
                                    name:String,_value:Boolean)
         extends InlineInput(inputOptions, CheckBoxInput(name,_value,inputOptions.isRequired))
 
-    case class InlineTextInput(override val inputOptions:InputOptions, name:String, override val initialValue: String="",minLength:Option[Int]=None,maxLength:Option[Int]=None,isPassword:Boolean = false,autoComplete:Option[String]=None,hidden:Boolean = false)
+    case class InlineTextInput(override val inputOptions:InputOptions,
+                               name:String,
+                               override val initialValue: String="",
+                               minLength:Option[Int]=None,
+                               maxLength:Option[Int]=None,
+                               isPassword:Boolean = false,
+                               autoComplete:Option[String]=None,
+                               hidden:Boolean = false)
         extends InlineInput(
             inputOptions,
             TextInput(name,initialValue,inputOptions.isRequired,minLength,maxLength,autoComplete,isPassword,hidden),
@@ -245,7 +255,7 @@ object inputs {
         }
 
         override def onSubmit(f: Event => Any): Unit = {
-            cancelError()
+            //cancelError()
             input.onSubmit(f)
         }
 
@@ -462,7 +472,8 @@ object inputs {
                          minLength:Option[Int]=None,
                          maxLength:Option[Int]=None,
                          autoComplete:Option[String]=None,
-                         isPassword:Boolean = false,hidden:Boolean=false) extends JSComponent with Input {
+                         isPassword:Boolean = false,
+                         hidden:Boolean=false) extends JSComponent with Input {
 
         val inp = input(name,if(isPassword) "password" else "text",initialValue,isRequired,autoComplete = autoComplete)
 
@@ -511,7 +522,7 @@ object inputs {
 
         def onChange(f: Event => Any): Unit = inp.onChange _
 
-        def onSubmit(f: Event => Any): Unit = inp.onSubmit _
+        def onSubmit(f: Event => Any): Unit = inp.onSubmit(f)
 
         def value: String = inp.value
 
